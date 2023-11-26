@@ -1,9 +1,15 @@
 import { Schema, model } from 'mongoose';
-import { TUser } from './user.interface';
+import { Order, TUser, userInstanceModel } from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 
-const userSchema = new Schema<TUser>({
+const orderSchema = new Schema<Order>({
+  productName: { type: String },
+  price: { type: Number },
+  quantity: { type: Number },
+});
+
+const userSchema = new Schema<TUser, userInstanceModel>({
   userId: { type: Number, required: true, unique: true },
   userName: { type: String },
   fullName: {
@@ -21,6 +27,7 @@ const userSchema = new Schema<TUser>({
 
   hobbies: [String],
   isActive: Boolean,
+  order?: [orderSchema],
 });
 
 // pre hook
@@ -46,8 +53,35 @@ userSchema.pre('save', async function (next) {
 //post hook
 
 userSchema.post('save', function (doc, next) {
-  doc.password = undefined;
+  if (doc && doc.password) {
+    doc.password = undefined;
+  }
   next();
 });
 
-export const userModel = model<TUser>('users', userSchema);
+userSchema.post('findOne', function (doc, next) {
+  if (doc && doc.password) {
+    doc.password = undefined;
+  }
+  next();
+});
+
+userSchema.post('find', function (doc, next) {
+  if (doc && doc.password) {
+    doc.password = undefined;
+  }
+  next();
+});
+
+userSchema.post('findOneAndUpdate', function (doc, next) {
+  if (doc && doc.password) {
+    doc.password = undefined;
+  }
+  next();
+});
+userSchema.statics.isUserExits = async function (userId: number | null) {
+  const existingUser = await userModel.findOne({ userId });
+  return existingUser;
+};
+
+export const userModel = model<TUser, userInstanceModel>('users', userSchema);

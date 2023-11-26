@@ -11,6 +11,13 @@ const fullNameSchema = z.object({
   lastName: z.string(),
 });
 
+const OrderSchema = z.object({
+  productName: z.string(),
+  price: z.number(),
+  quantity: z.number(),
+});
+export const productSchemaValidationZod = z.optional(OrderSchema);
+
 export const userSchemaZodValidation = z.object({
   userId: z.number(),
   userName: z.string(),
@@ -21,4 +28,5 @@ export const userSchemaZodValidation = z.object({
   address: addressSchema,
   hobbies: z.array(z.string()),
   isActive: z.boolean(),
+  order: z.array(OrderSchema).optional(),
 });
