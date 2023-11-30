@@ -28,5 +28,5 @@ export const userSchemaZodValidation = z.object({
   address: addressSchema,
   hobbies: z.array(z.string()),
   isActive: z.boolean(),
-  order: z.array(OrderSchema).optional(),
+  orders: z.array(OrderSchema).optional(),
 });

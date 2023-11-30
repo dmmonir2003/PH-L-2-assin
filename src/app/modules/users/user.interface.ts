@@ -24,10 +24,10 @@ export type TUser = {
   fullName: FullName;
   age: number;
   email: string;
-  isActive: boolean;
   hobbies: string[];
   address: Address;
-  order?: [];
+  isActive: boolean;
+  orders?: [];
 };
 
 export interface userInstanceModel extends Model<TUser> {

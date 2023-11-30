@@ -1,4 +1,5 @@
-import { TUser } from './user.interface';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Order, TUser } from './user.interface';
 import { userModel } from './user.schema';
 
 const cteateUserInDB = async function (user: TUser) {
@@ -13,7 +14,7 @@ const cteateUserInDB = async function (user: TUser) {
 
     const result = await userModel.create(user);
     return result;
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Failed to create user: ${err.message}`);
   }
 };
@@ -28,13 +29,13 @@ const singaleUserInDB = async function (userId: number) {
     const userExits = await userModel.isUserExits(userId);
 
     if (!userExits) {
-      throw new Error('User not exists');
+      throw new Error('User not found!');
     }
 
     const result = await userModel.findOne({ userId });
     return result;
-  } catch (err) {
-    throw new Error(`Failed to create user: ${err.message}`);
+  } catch (err: any) {
+    throw new Error(`Failed to fetched user: ${err.message}`);
   }
 };
 
@@ -43,7 +44,7 @@ const updateUserInDB = async function (userId: number, userData: TUser) {
     const userExits = await userModel.isUserExits(userId);
 
     if (!userExits) {
-      throw new Error('User not exists');
+      throw new Error('User not found!');
     }
 
     const result = await userModel.findOneAndUpdate({ userId }, userData, {
@@ -51,8 +52,8 @@ const updateUserInDB = async function (userId: number, userData: TUser) {
       runValidators: true,
     });
     return result;
-  } catch (err) {
-    throw new Error(`Failed to create user: ${err.message}`);
+  } catch (err: any) {
+    throw new Error(`Failed to update user: ${err.message}`);
   }
 };
 
@@ -61,31 +62,31 @@ const deleteUserInDB = async function (userId: number) {
     const userExits = await userModel.isUserExits(userId);
 
     if (!userExits) {
-      throw new Error('User not exists');
+      throw new Error('User not found!');
     }
     const result = await userModel.findOneAndDelete({ userId });
     return result;
-  } catch (err) {
-    throw new Error(`Failed to create user: ${err.message}`);
+  } catch (err: any) {
+    throw new Error(`Failed to delete user: ${err.message}`);
   }
 };
 
-const createOrderInDB = async function (userId: number, orderData) {
+const createOrderInDB = async function (userId: number, orderData: Order) {
   try {
     const userExists = await userModel.isUserExits(userId);
     if (!userExists) {
-      throw new Error('User not exists');
+      throw new Error('User not found!');
     }
 
-    const updatedUser = await userModel
+    await userModel
       .findOneAndUpdate(
         { userId: userId },
-        { $push: { order: orderData } },
+        { $push: { orders: orderData } },
         { new: true },
       )
       .exec();
-  } catch (err) {
-    throw new Error(`Failed to create user: ${err.message}`);
+  } catch (err: any) {
+    throw new Error(`Failed to create order: ${err.message}`);
   }
 };
 
@@ -93,17 +94,17 @@ const ordersPriceInDB = async function (userId: number) {
   try {
     const userExists = await userModel.isUserExits(userId);
     if (!userExists) {
-      throw new Error('User not exists');
+      throw new Error('User not found!');
     }
 
     const getPrices = await userModel
       .aggregate([
         { $match: { userId: userId } },
-        { $unwind: '$order' },
+        { $unwind: '$orders' },
         {
           $group: {
             _id: '$userId',
-            totalPrices: { $sum: '$order.price' },
+            totalPrices: { $sum: '$orders.price' },
           },
         },
         { $project: { totalPrices: 1 } },
@@ -111,8 +112,8 @@ const ordersPriceInDB = async function (userId: number) {
       .exec();
 
     return getPrices;
-  } catch (err) {
-    throw new Error(`Failed to create user: ${err.message}`);
+  } catch (err: any) {
+    throw new Error(`Failed to get total price: ${err.message}`);
   }
 };
 
@@ -120,15 +121,15 @@ const getALlOrderInDB = async function (userId: number) {
   try {
     const userExists = await userModel.isUserExits(userId);
     if (!userExists) {
-      throw new Error('User not exists');
+      throw new Error('User not found!');
     }
 
     const getOrders = await userModel
-      .aggregate([{ $match: { userId: userId } }, { $project: { order: 1 } }])
+      .aggregate([{ $match: { userId: userId } }, { $project: { orders: 1 } }])
       .exec();
     return getOrders;
-  } catch (err) {
-    throw new Error(`Failed to create user: ${err.message}`);
+  } catch (err: any) {
+    throw new Error(`Failed to get all Order: ${err.message}`);
   }
 };
 

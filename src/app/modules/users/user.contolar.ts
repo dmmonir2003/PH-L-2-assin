@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { servicesDb } from './user.service';
 import {
   productSchemaValidationZod,
   userSchemaZodValidation,
 } from './user.zod.validation.schema';
+import { Order, TUser } from './user.interface';
 
 const getAllUser = async (req: Request, res: Response) => {
   try {
@@ -50,7 +52,12 @@ const updateUser = async (req: Request, res: Response) => {
     const userData = req.body;
     const userId = req.params.userId;
 
-    const result = await servicesDb.updateUserInDB(parseInt(userId), userData);
+    const zodValidationData = userSchemaZodValidation.parse(userData) as TUser;
+
+    const result = await servicesDb.updateUserInDB(
+      parseInt(userId),
+      zodValidationData,
+    );
 
     res.status(200).json({
       success: true,
@@ -75,6 +82,7 @@ const deleteUser = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'User deleted successfully!',
+      data: null,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
@@ -88,9 +96,9 @@ const deleteUser = async (req: Request, res: Response) => {
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const { user } = req.body;
+    const data = req.body;
 
-    const zodValidationData = userSchemaZodValidation.parse(user);
+    const zodValidationData = userSchemaZodValidation.parse(data) as TUser;
 
     const result = await servicesDb.cteateUserInDB(zodValidationData);
 
@@ -119,7 +127,7 @@ const getAllOrders = async function (req: Request, res: Response) {
       message: ' Order fetched successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err: any) {
     res.status(400).json({
       success: false,
       message: 'Order not fetched !',
@@ -138,7 +146,7 @@ const ordersPriceSum = async function (req: Request, res: Response) {
       message: 'Total price calculated successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err: any) {
     res.status(400).json({
       success: false,
       message: 'Total price not calculated !',
@@ -152,15 +160,17 @@ const createOrder = async function (req: Request, res: Response) {
     const userId = parseInt(req.params.userId);
     const orderProduct = req.body;
 
-    const productVarify = productSchemaValidationZod.parse(orderProduct);
+    const productVarify = productSchemaValidationZod.parse(
+      orderProduct,
+    ) as Order;
 
-    const result = await servicesDb.createOrderInDB(userId, productVarify);
+    await servicesDb.createOrderInDB(userId, productVarify);
     res.status(200).json({
       success: true,
       message: 'Order created successfully!',
       data: null,
     });
-  } catch (err) {
+  } catch (err: any) {
     res.status(400).json({
       success: false,
       message: 'Order not created !',

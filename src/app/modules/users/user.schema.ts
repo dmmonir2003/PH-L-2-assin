@@ -27,13 +27,22 @@ const userSchema = new Schema<TUser, userInstanceModel>({
 
   hobbies: [String],
   isActive: Boolean,
-  order?: [orderSchema],
+  orders: [orderSchema],
 });
 
 // pre hook
 
 userSchema.pre('find', async function (next) {
   this.select('userName fullName age email address');
+  next();
+});
+
+userSchema.pre('findOne', async function (next) {
+  this.select('userId userName fullName age email isActive   hobbies address');
+  next();
+});
+userSchema.pre('findOneAndUpdate', async function (next) {
+  this.select('userId userName fullName age email isActive   hobbies address');
   next();
 });
 

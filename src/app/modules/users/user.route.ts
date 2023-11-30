@@ -3,6 +3,8 @@ import { userContolar } from './user.contolar';
 
 const router = express.Router();
 
+router.use(express.json());
+
 //all application route
 
 router.post('/users', userContolar.createUser);
