@@ -1,35 +1,5 @@
 
  Appollo Assignment -2
- 
- <-----------> please following this  Notice : data passing from postman create a user formet into mongoDb <--------->
- 
- postman formet :
-       {
-    "user": {
-        "userId": 65,
-        "userName": "john_doe",
-        "fullName": {
-            "firstName": "John",
-            "lastName": "Doe"
-        },
-        "age": 25,
-        "email": "j.ex@l.com",
-        "password": "1234",
-        "address": {
-            "street": "123 Main St",
-            "city": "Cityville",
-            "country": "Countryland"
-        },
-        "hobbies": [
-            "reading",
-            "coding"
-        ],
-        "isActive": true,
-        "order": [
-           
-        ]
-    }
-}                     
   
   # PH-L-2-assin:   command key 
 
