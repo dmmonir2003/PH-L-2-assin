@@ -19,7 +19,7 @@ export type Order = {
 
 export type TUser = {
   userId: number;
-  userName: string;
+  username: string;
   password: string | undefined;
   fullName: FullName;
   age: number;

@@ -20,7 +20,7 @@ export const productSchemaValidationZod = z.optional(OrderSchema);
 
 export const userSchemaZodValidation = z.object({
   userId: z.number(),
-  userName: z.string(),
+  username: z.string(),
   fullName: fullNameSchema,
   age: z.number(),
   email: z.string().email({ message: 'Invalid email address' }),

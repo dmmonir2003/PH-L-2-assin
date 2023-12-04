@@ -11,7 +11,7 @@ const orderSchema = new Schema<Order>({
 
 const userSchema = new Schema<TUser, userInstanceModel>({
   userId: { type: Number, required: true, unique: true },
-  userName: { type: String },
+  username: { type: String },
   fullName: {
     firstName: { type: String },
     lastName: { type: String },
@@ -33,16 +33,16 @@ const userSchema = new Schema<TUser, userInstanceModel>({
 // pre hook
 
 userSchema.pre('find', async function (next) {
-  this.select('userName fullName age email address');
+  this.select('username fullname age email address');
   next();
 });
 
 userSchema.pre('findOne', async function (next) {
-  this.select('userId userName fullName age email isActive   hobbies address');
+  this.select('userId username fullName age email isActive   hobbies address');
   next();
 });
 userSchema.pre('findOneAndUpdate', async function (next) {
-  this.select('userId userName fullName age email isActive   hobbies address');
+  this.select('userId username fullName age email isActive   hobbies address');
   next();
 });
 

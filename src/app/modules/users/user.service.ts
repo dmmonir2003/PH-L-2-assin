@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import config from '../../config';
 import { Order, TUser } from './user.interface';
 import { userModel } from './user.schema';
+import bcrypt from 'bcrypt';
 
 const cteateUserInDB = async function (user: TUser) {
   try {
@@ -45,6 +47,13 @@ const updateUserInDB = async function (userId: number, userData: TUser) {
 
     if (!userExits) {
       throw new Error('User not found!');
+    }
+
+    if (userData.password) {
+      userData.password = await bcrypt.hash(
+        userData.password,
+        Number(config.bcrypt_salt),
+      );
     }
 
     const result = await userModel.findOneAndUpdate({ userId }, userData, {
